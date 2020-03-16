@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package resources;
+
+service Provider {
+    rpc RequestTaskExecution (TaskExecutionRequest) returns (TaskExecutionRequestResponse) {}
+}
+
+message TaskExecutionRequest {
+    string id = 1;
+    string input = 2;
+}
+
+message TaskExecutionRequestResponse {
+    string id = 1;
+}
+
+service Requester {
+    rpc RequestTaskAcceptance (TaskAcceptanceRequest) returns (TaskAcceptanceRequestResponse) {}
+}
+
+message TaskAcceptanceRequest {
+    string id = 1;
+    string output = 2;
+}
+
+message TaskAcceptanceRequestResponse {
+    string id = 1;
+}
+
+// service Controller {
+//     Accept
+//     Request
+// }
+
+// service Executor {
+//     Request
+// }
+
+
