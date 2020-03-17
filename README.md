@@ -21,7 +21,16 @@ $ ./velas-sphere provider
 $ ./velas-sphere requester
 ```
 
-These binaries will be dockerized as well in the nearest future for easier and consistent deployments.
+Dockerized version uses multi-stage dockerfile for multiple lightweight images, so the it looks like this:
+
+``` sh
+$ docker build --target velas-sphere-plugin -t velas-sphere-plugin-local .
+$ docker build --target velas-sphere-provider -t velas-sphere-provider-local .
+$ docker build --target velas-sphere-requester -t velas-sphere-requester-local .
+$ docker-compose up -d
+```
+
+The `host` network mode is used in the `docker-compose.yaml`.
 
 ## Contribution Guideline
 
