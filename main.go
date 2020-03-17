@@ -6,7 +6,7 @@ import (
 	"log"
 
 	proto "github.com/golang/protobuf/proto"
-	"github.com/sorenvonsarvort/velas-sphere/internal/cli"
+	"github.com/sorenvonsarvort/velas-sphere/internal/command"
 	"github.com/sorenvonsarvort/velas-sphere/internal/resources"
 	"github.com/spf13/cobra"
 )
@@ -31,11 +31,12 @@ func serializationDemo() {
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use: "sphere",
+		Use: "velas-sphere",
 	}
 
-	rootCmd.AddCommand(cli.NewProviderCommand())
-	rootCmd.AddCommand(cli.NewRequesterCommand())
+	rootCmd.AddCommand(command.NewPluginCommand())
+	rootCmd.AddCommand(command.NewProviderCommand())
+	rootCmd.AddCommand(command.NewRequesterCommand())
 
 	rootCmd.SilenceErrors = true
 	rootCmd.SilenceUsage = true

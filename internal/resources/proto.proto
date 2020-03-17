@@ -13,28 +13,19 @@ message TaskExecutionRequest {
 
 message TaskExecutionRequestResponse {
     string id = 1;
-}
-
-service Requester {
-    rpc RequestTaskAcceptance (TaskAcceptanceRequest) returns (TaskAcceptanceRequestResponse) {}
-}
-
-message TaskAcceptanceRequest {
-    string id = 1;
     string output = 2;
 }
 
-message TaskAcceptanceRequestResponse {
-    string id = 1;
+service Plugin {
+    rpc RequestJobExecution (JobExecutionRequest) returns (JobExecutionRequestResponse) {}
 }
 
-// service Controller {
-//     Accept
-//     Request
-// }
+message JobExecutionRequest {
+    string id = 1;
+    string input = 2;
+}
 
-// service Executor {
-//     Request
-// }
-
-
+message JobExecutionRequestResponse {
+    string id = 1;
+    string output = 2;
+}
