@@ -1,18 +1,27 @@
 version: '3'
+
 services:
   requester:
     image: velas-sphere-requester-local
     command: "requester"
-    network_mode: host
+    networks:
+      - frontend
+
   provider:
     image: velas-sphere-provider-local
     ports:
       - "8081:8081"
     command: "provider"
-    network_mode: host
+    networks:
+      - primary
+      - frontend
+
   plugin:
     image: velas-sphere-plugin-local
-    ports:
-      - "8082:8082"
     command: "plugin"
-    network_mode: host
+    networks:
+      - primary
+
+networks:
+  primary:
+  frontend:

@@ -1,0 +1,10 @@
+{
+    "provider": {
+        "server": {
+            "plugin_target": "127.0.0.1:8082"
+        }
+    },
+    "requester": {
+        "target": "127.0.0.1:8081"
+    }
+}

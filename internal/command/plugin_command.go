@@ -1,21 +1,31 @@
 package command
 
 import (
-	"github.com/sorenvonsarvort/velas-sphere/internal/service"
+	"fmt"
+	"log"
+	"net"
+
+	"github.com/sorenvonsarvort/velas-sphere/internal/resources"
+	"github.com/sorenvonsarvort/velas-sphere/internal/server"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 )
 
 func NewPluginCommand() *cobra.Command {
 	return &cobra.Command{
 		Use: "plugin",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			requester := service.NewPluginService(
-				service.PluginServiceConfig{
-					ListenPort: ":8082",
-				},
-			)
+			lis, err := net.Listen("tcp", ":8082")
+			if err != nil {
+				return fmt.Errorf("failed to listen: %w", err)
+			}
 
-			return requester(cmd.Context())
+			s := grpc.NewServer()
+			resources.RegisterPluginServer(s, server.PluginServer{})
+
+			log.Println("plugin service started")
+
+			return s.Serve(lis)
 		},
 	}
 }

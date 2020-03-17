@@ -15,6 +15,7 @@ Requesters pay providers for the shared resources using Ethereum Network and sma
 Since the whole Velas Sphere node is implemented using Golang exclusively, it is very simple to build and run.
 
 ```bash
+$ cp config-local-example.json config.json
 $ go build .
 $ ./velas-sphere plugin
 $ ./velas-sphere provider
@@ -24,13 +25,14 @@ $ ./velas-sphere requester
 Dockerized version uses multi-stage dockerfile for multiple lightweight images, so the it looks like this:
 
 ``` sh
+$ cp config-docker-example.json config.json
 $ docker build --target velas-sphere-plugin -t velas-sphere-plugin-local .
 $ docker build --target velas-sphere-provider -t velas-sphere-provider-local .
 $ docker build --target velas-sphere-requester -t velas-sphere-requester-local .
 $ docker-compose up -d
 ```
 
-The `host` network mode is used in the `docker-compose.yaml`.
+Be warned that the services at the moment do not have any dial timeout, so local docker config can lead into requester service fail when used. As a workaround try `docker-compose up -d` again.
 
 ## Contribution Guideline
 
