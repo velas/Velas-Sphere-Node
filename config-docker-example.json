@@ -1,8 +1,6 @@
 {
     "provider": {
-        "server": {
-            "plugin_target": "plugin:8082"
-        }
+        "plugin_target": "plugin:8082"
     },
     "requester": {
         "target": "provider:8081"
