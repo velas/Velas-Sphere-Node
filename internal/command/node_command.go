@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"sync"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -78,16 +79,30 @@ func NewNodeCommand() *cobra.Command {
 
 			r.Post(
 				"/task_execution_request",
-				handler.NewPostTaskExecutionRequestHandler(
-					handler.Config{
-						DB: db,
-					},
-				),
+				// handler.NewPostTaskExecutionRequestHandler(
+				// 	handler.Config{
+				// 		DB: db,
+				// 	},
+				// ),
+				nil,
 			)
 
-			log.Println("api service started")
+			wg := sync.WaitGroup{}
+			wg.Add(2)
 
-			go http.ListenAndServe(":3000", r)
+			go func(wg *sync.WaitGroup) {
+				log.Println("api service started")
+
+				defer func() {
+					// We do not need to handle any panics, since it's already done by the router!
+					wg.Done()
+				}()
+
+				err := http.ListenAndServe(":3000", r)
+				if err != nil {
+					log.Println("failed to listen and serve:", err)
+				}
+			}(&wg)
 
 			lis, err := net.Listen("tcp", ":8081")
 			if err != nil {
@@ -108,9 +123,27 @@ func NewNodeCommand() *cobra.Command {
 				},
 			)
 
-			log.Println("provider service started")
+			go func(wg *sync.WaitGroup) {
+				log.Println("provider service started")
 
-			return s.Serve(lis)
+				defer func() {
+					r := recover()
+					if r != nil {
+						log.Println("got panic:", r)
+					}
+
+					wg.Done()
+				}()
+
+				err := s.Serve(lis)
+				if err != nil {
+					log.Println("failed to serve:", err)
+				}
+			}(&wg)
+
+			wg.Wait()
+
+			return errors.New("all the services are stopped")
 		},
 	}
 }
