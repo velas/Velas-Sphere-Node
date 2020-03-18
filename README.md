@@ -29,6 +29,7 @@ Dockerized version uses multi-stage dockerfile for multiple lightweight images, 
 
 ``` sh
 $ cp config-docker-example.json config.json
+$ mkdir db
 $ docker build --target velas-sphere-plugin -t velas-sphere-plugin-local .
 $ docker build --target velas-sphere-node -t velas-sphere-node-local .
 $ docker-compose up -d
