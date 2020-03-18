@@ -27,7 +27,7 @@ func NewNodeCommand() *cobra.Command {
 		Use: "node",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			config := Config{
-				Provider: ProviderConfig{
+				Provider: NodeConfig{
 					PluginTarget: "plugin:8082",
 				},
 			}

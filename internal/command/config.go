@@ -1,9 +1,9 @@
 package command
 
-type ProviderConfig struct {
+type NodeConfig struct {
 	PluginTarget string `json:"plugin_target"`
 }
 
 type Config struct {
-	Provider ProviderConfig `json:"provider"`
+	Provider NodeConfig `json:"provider"`
 }
