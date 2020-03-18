@@ -79,12 +79,11 @@ func NewNodeCommand() *cobra.Command {
 
 			r.Post(
 				"/task_execution_request",
-				// handler.NewPostTaskExecutionRequestHandler(
-				// 	handler.Config{
-				// 		DB: db,
-				// 	},
-				// ),
-				nil,
+				handler.NewPostTaskExecutionRequestHandler(
+					handler.Config{
+						DB: db,
+					},
+				),
 			)
 
 			wg := sync.WaitGroup{}
