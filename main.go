@@ -35,8 +35,7 @@ func main() {
 	}
 
 	rootCmd.AddCommand(command.NewPluginCommand())
-	rootCmd.AddCommand(command.NewProviderCommand())
-	rootCmd.AddCommand(command.NewRequesterCommand())
+	rootCmd.AddCommand(command.NewNodeCommand())
 
 	rootCmd.SilenceErrors = true
 	rootCmd.SilenceUsage = true

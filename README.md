@@ -18,8 +18,7 @@ Since the whole Velas Sphere node is implemented using Golang exclusively, it is
 $ cp config-local-example.json config.json
 $ go build .
 $ ./velas-sphere plugin
-$ ./velas-sphere provider
-$ ./velas-sphere requester
+$ ./velas-sphere node
 ```
 
 Dockerized version uses multi-stage dockerfile for multiple lightweight images, so the it looks like this:
@@ -27,12 +26,26 @@ Dockerized version uses multi-stage dockerfile for multiple lightweight images, 
 ``` sh
 $ cp config-docker-example.json config.json
 $ docker build --target velas-sphere-plugin -t velas-sphere-plugin-local .
-$ docker build --target velas-sphere-provider -t velas-sphere-provider-local .
-$ docker build --target velas-sphere-requester -t velas-sphere-requester-local .
+$ docker build --target velas-sphere-node -t velas-sphere-node-local .
 $ docker-compose up -d
 ```
 
-Be warned that the services at the moment do not have any dial timeout, so local docker config can lead into requester service fail when used. As a workaround try `docker-compose up -d` again.
+You can request task execution via a simple RESTful API. The following example shows how to request task execution on a dockerized deployment using a single node:
+
+``` sh 
+curl -X POST 127.0.0.1:3000/task_execution_request -d \
+'{
+    "target": "node:8081", 
+    "id": "1",
+    "input": "hello"
+}'
+```
+
+The response will be the following:
+
+```json
+{"id":"1","output":"world"}
+```
 
 ## Contribution Guideline
 

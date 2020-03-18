@@ -1,8 +1,5 @@
 {
     "provider": {
-        "plugin_target": "plugin:8082"
-    },
-    "requester": {
-        "target": "provider:8081"
+        "plugin_target": "127.0.0.1:8082"
     }
 }
