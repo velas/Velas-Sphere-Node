@@ -27,7 +27,7 @@ func NewNodeCommand() *cobra.Command {
 		Use: "node",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			config := Config{
-				Provider: NodeConfig{
+				Node: NodeConfig{
 					PluginTarget: "plugin:8082",
 				},
 			}
@@ -108,7 +108,7 @@ func NewNodeCommand() *cobra.Command {
 				return fmt.Errorf("failed to listen: %w", err)
 			}
 
-			conn, err := grpc.Dial(config.Provider.PluginTarget, grpc.WithInsecure())
+			conn, err := grpc.Dial(config.Node.PluginTarget, grpc.WithInsecure())
 			if err != nil {
 				return errors.Wrap(err, "failed to dial the plugin")
 			}

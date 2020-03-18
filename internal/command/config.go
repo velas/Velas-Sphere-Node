@@ -5,5 +5,5 @@ type NodeConfig struct {
 }
 
 type Config struct {
-	Provider NodeConfig `json:"provider"`
+	Node NodeConfig `json:"node"`
 }
