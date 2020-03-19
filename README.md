@@ -10,6 +10,10 @@ This respository is an active WIP.
 
 Velas Sphere is a P2P network of nodes communicating between each other using gRPC. Each node can act as a requester and provider, has some plugins and provides a RESTful API for UI support. The data is stored in a LevelDB database. In order to allow plugins be written in any general-purpose language, they are physically decoupled from the node service using again gRPC and each plugin is basically a separate service.
 
+Here is how the node architecture looks like:
+
+![](assets/velas-sphere-node-architecture-3.0-github.png)
+
 ## Economy
 
 Requesters pay providers for the shared resources using Ethereum Network and smart-contracts.
