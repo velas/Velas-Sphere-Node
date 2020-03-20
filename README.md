@@ -29,7 +29,7 @@ $ ./velas-sphere plugin
 $ ./velas-sphere node
 ```
 
-Dockerized version uses multi-stage dockerfile for multiple lightweight images, so the it looks like this:
+Dockerized version uses multi-stage dockerfile for multiple lightweight images, so it looks like this:
 
 ``` sh
 $ cp config-docker-example.json config.json
