@@ -93,6 +93,24 @@ func NewNodeCommand() *cobra.Command {
 				),
 			)
 
+			r.Route("/statistic", func(r chi.Router) {
+				r.Get("tasks",
+					handler.NewGetTasksStatisticHandler(
+						handler.Config{
+							DB: db,
+						},
+					),
+				)
+
+				r.Get("nodes",
+					handler.NewGetNodesStatisticHandler(
+						handler.Config{
+							DB: db,
+						},
+					),
+				)
+			})
+
 			wg := sync.WaitGroup{}
 			wg.Add(2)
 
