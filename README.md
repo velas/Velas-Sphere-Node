@@ -66,11 +66,7 @@ Basic contribution rules are:
 
 ### How to write a plugin
 
-Technically a plugin is a simple gRPC server responsible for handling task execution requests.
-
-At the moment, both the proto and node service support only a single plugin.
-
-You can implement Your own by generating the gRPC interfaces for a language of choice.
+Technically a plugin is a simple gRPC server responsible for handling task execution requests. At the moment, both the proto and node service support only a single plugin. You can implement Your own by generating the gRPC interfaces for a language of choice.
 
 Example for Golang:
 
