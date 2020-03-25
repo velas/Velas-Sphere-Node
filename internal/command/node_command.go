@@ -29,8 +29,15 @@ func NewNodeCommand() *cobra.Command {
 			config := Config{
 				Node: NodeConfig{
 					PluginTarget: "plugin:8082",
+					// TODO: node client config
+					// TODO: price tolarance config
 				},
 			}
+
+			// client, err := ethclient.Dial("http://127.0.0.1:8545")
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
 
 			configBytes, err := ioutil.ReadFile("config.json")
 			if err == nil {
@@ -119,6 +126,7 @@ func NewNodeCommand() *cobra.Command {
 				s,
 				server.ProviderServer{
 					PluginClient: resources.NewPluginClient(conn),
+					// EthClient:    client,
 				},
 			)
 

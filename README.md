@@ -21,10 +21,9 @@ Requesters pay providers for the shared resources using Ethereum Network and sma
 ## Building, Installing and Running a Velas Sphere node locally
 
 Since the whole Velas Sphere node service is implemented using Golang exclusively, it is very simple to build and run. It also comes with a simple plugin for demo purposes.
-
 ```bash
 $ cp config-local-example.json config.json
-$ go build .
+$ CGO_ENABLED=0 go build .
 $ ./velas-sphere plugin
 $ ./velas-sphere node
 ```
