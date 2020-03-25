@@ -66,11 +66,7 @@ Basic contribution rules are:
 
 ### How to write a plugin
 
-Technically a plugin is a simple gRPC server responsible for handling task execution requests.
-
-At the moment, both the proto and node service support only a single plugin.
-
-You can implement Your own by generating the gRPC interfaces for a language of choice.
+Technically a plugin is a simple gRPC server responsible for handling task execution requests. At the moment, both the proto and node service support only a single plugin. You can implement Your own by generating the gRPC interfaces for a language of choice.
 
 Example for Golang:
 
@@ -89,7 +85,11 @@ $ python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. proto.proto
 
 Further information can be found at the original source: https://grpc.io/docs/tutorials/
 
+#### Local deployment
+
 After You have implemented the server interface, You can start the listener at any port You like. The default is `:8082`, so make sure the `config.json` contains the correct host and port.
+
+#### Dockerized deployment
 
 In the case You use the dockerized version, here are a few more steps to deploy it:
 
