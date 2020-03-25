@@ -1,7 +1,7 @@
 package entity
 
 type TaskExecutionRequest struct {
-	Target string `json:"target"`
-	ID     string `json:"id"`
-	Input  string `json:"input"`
+	Type  string `json:"type"`
+	ID    string `json:"id"`
+	Input string `json:"input"`
 }
