@@ -38,7 +38,7 @@ func NewPostTaskExecutionRequestHandler(config Config) func(w http.ResponseWrite
 			return
 		}
 
-		conn, err := grpc.Dial(request.Target, grpc.WithInsecure())
+		conn, err := grpc.Dial(request.Type, grpc.WithInsecure())
 		if err != nil {
 			log.Println("failed to dial the target")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -60,7 +60,24 @@ func NewPostTaskExecutionRequestHandler(config Config) func(w http.ResponseWrite
 
 		err = db.Put([]byte(enum.LastTaskKey), []byte(providerResponse.String()), nil)
 		if err != nil {
-			log.Println("failed to save the task")
+			log.Println("failed to save the last task")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		task, err := json.Marshal(&entity.TaskStatistic{
+			Type:   request.Type,
+			Status: entity.TaskStatusCreated,
+		})
+		if err != nil {
+			log.Println("failed to marshal task info")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		err = db.Put([]byte(entity.TaskIDFromString(request.ID)), task, nil)
+		if err != nil {
+			log.Println("failed to save the task info")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
