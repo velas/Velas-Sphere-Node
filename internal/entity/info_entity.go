@@ -1,6 +1,6 @@
 package entity
 
-type NodeInfo struct {
+type Info struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
 }

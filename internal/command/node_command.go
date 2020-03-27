@@ -57,7 +57,7 @@ func NewNodeCommand() *cobra.Command {
 			defer db.Close()
 
 			initialEntry, err := json.Marshal(
-				entity.NodeInfo{
+				entity.Info{
 					Name:    "Dev Node",
 					Version: "0.0.1",
 					// TODO: price tolerance info injection
