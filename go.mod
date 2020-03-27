@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/ethereum/go-ethereum v1.9.12
+	github.com/gabriel-vasile/mimetype v1.0.4
 	github.com/go-chi/chi v4.0.3+incompatible
 	github.com/golang/protobuf v1.3.5
 	github.com/keybase/go-codec v0.0.0-20180928230036-164397562123 // indirect

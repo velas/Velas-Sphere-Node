@@ -8,7 +8,7 @@ This repository is an active WIP.
 
 ## Architecture 
 
-Velas Sphere is a P2P network of nodes communicating between each other using gRPC. Each node can act as a requester and provider, has some plugins, and provides a RESTful API for UI support. The data is stored in a LevelDB database. In order to allow plugins to be written in any general-purpose language, they are physically decoupled from the node service using gRPC again, and each plugin is basically a separate service.
+Velas Sphere is a P2P network of nodes communicating between each other using gRPC. Each node can act as a requester and provider (for task execution and file storage), has some plugins, and provides a RESTful API for UI support. The data is stored in a LevelDB database. In order to allow plugins to be written in any general-purpose language, they are physically decoupled from the node service using gRPC again, and each plugin is basically a separate service.
 
 Here is how the node architecture looks like:
 
@@ -42,7 +42,7 @@ $ docker-compose up -d
 You can request task execution via a simple RESTful API. The following example shows how to request task execution on a dockerized deployment using a single node:
 
 ``` sh 
-curl -X POST 127.0.0.1:3000/task_execution_request -d \
+curl -X POST 127.0.0.1:3000/task -d \
 '{
     "target": "node:8081", 
     "id": "1",

@@ -8,8 +8,8 @@ import (
 
 type PluginServer struct{}
 
-func (p PluginServer) RequestJobExecution(ctx context.Context, req *resources.JobExecutionRequest) (*resources.JobExecutionRequestResponse, error) {
-	return &resources.JobExecutionRequestResponse{
+func (p PluginServer) RequestJobExecution(ctx context.Context, req *resources.JobExecutionRequest) (*resources.JobExecutionResponse, error) {
+	return &resources.JobExecutionResponse{
 		Id:     req.GetId(),
 		Output: "world",
 	}, nil

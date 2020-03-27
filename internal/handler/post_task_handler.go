@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewPostTaskExecutionRequestHandler(config Config) func(w http.ResponseWriter, r *http.Request) {
+func NewPostTaskHandler(config Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if config.DB == nil {
 			log.Println("no db provided")
@@ -29,7 +29,7 @@ func NewPostTaskExecutionRequestHandler(config Config) func(w http.ResponseWrite
 			return
 		}
 
-		request := entity.TaskExecutionRequest{}
+		request := entity.Task{}
 
 		err = json.Unmarshal(requestBytes, &request)
 		if err != nil {

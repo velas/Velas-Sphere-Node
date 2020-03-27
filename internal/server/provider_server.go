@@ -3,16 +3,17 @@ package server
 import (
 	"context"
 
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/pkg/errors"
 	"github.com/sorenvonsarvort/velas-sphere/internal/resources"
 )
 
 type ProviderServer struct {
 	PluginClient resources.PluginClient
-	// EthClient    *ethclient.Client
+	EthClient    *ethclient.Client
 }
 
-func (p ProviderServer) RequestTaskExecution(ctx context.Context, req *resources.TaskExecutionRequest) (*resources.TaskExecutionRequestResponse, error) {
+func (p ProviderServer) RequestTaskExecution(ctx context.Context, req *resources.TaskExecutionRequest) (*resources.TaskExecutionResponse, error) {
 	if p.PluginClient == nil {
 		return nil, errors.New("no plugin provided")
 	}
@@ -68,7 +69,7 @@ func (p ProviderServer) RequestTaskExecution(ctx context.Context, req *resources
 	// // TODO: use invoiceTx?
 	// _ = invoiceTx
 
-	return &resources.TaskExecutionRequestResponse{
+	return &resources.TaskExecutionResponse{
 		Id:     resp.GetId(),
 		Output: resp.GetOutput(),
 	}, nil

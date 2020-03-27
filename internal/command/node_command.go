@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/pkg/errors"
@@ -22,22 +23,26 @@ import (
 	"google.golang.org/grpc"
 )
 
+// TODO: run file service
+
 func NewNodeCommand() *cobra.Command {
 	return &cobra.Command{
 		Use: "node",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			config := Config{
 				Node: NodeConfig{
-					PluginTarget: "plugin:8082",
-					// TODO: node client config
+					PluginTarget:        "plugin:8082",
+					StoragePluginTarget: "storage:8083",
+					EthereumNodeTarget:  "http://127.0.0.1:8545",
 					// TODO: price tolarance config
+					// TODO: keypair config
 				},
 			}
 
-			// client, err := ethclient.Dial("http://127.0.0.1:8545")
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
+			client, err := ethclient.Dial(config.Node.EthereumNodeTarget)
+			if err != nil {
+				log.Fatal(err)
+			}
 
 			configBytes, err := ioutil.ReadFile("config.json")
 			if err == nil {
@@ -55,6 +60,9 @@ func NewNodeCommand() *cobra.Command {
 				entity.NodeInfo{
 					Name:    "Dev Node",
 					Version: "0.0.1",
+					// TODO: price tolerance info injection
+					// TODO: supported plugins info injection
+					// TODO: public key info injection
 				},
 			)
 			if err != nil {
@@ -85,8 +93,17 @@ func NewNodeCommand() *cobra.Command {
 			)
 
 			r.Post(
-				"/task_execution_request",
-				handler.NewPostTaskExecutionRequestHandler(
+				"/task",
+				handler.NewPostTaskHandler(
+					handler.Config{
+						DB: db,
+					},
+				),
+			)
+
+			r.Post(
+				"/file",
+				handler.NewPostFileHandler(
 					handler.Config{
 						DB: db,
 					},
@@ -94,7 +111,7 @@ func NewNodeCommand() *cobra.Command {
 			)
 
 			wg := sync.WaitGroup{}
-			wg.Add(2)
+			wg.Add(3)
 
 			go func(wg *sync.WaitGroup) {
 				log.Println("api service started")
@@ -126,7 +143,7 @@ func NewNodeCommand() *cobra.Command {
 				s,
 				server.ProviderServer{
 					PluginClient: resources.NewPluginClient(conn),
-					// EthClient:    client,
+					EthClient:    client,
 				},
 			)
 
@@ -148,9 +165,35 @@ func NewNodeCommand() *cobra.Command {
 				}
 			}(&wg)
 
+			storageListener, err := net.Listen("tcp", ":8083")
+			if err != nil {
+				return fmt.Errorf("failed to listen: %w", err)
+			}
+
+			storageServer := grpc.NewServer()
+			resources.RegisterStorageServer(storageServer, server.StorageServer{})
+
+			go func(wg *sync.WaitGroup) {
+				log.Println("storage service started")
+
+				defer func() {
+					r := recover()
+					if r != nil {
+						log.Println("got panic:", r)
+					}
+
+					wg.Done()
+				}()
+
+				err := storageServer.Serve(storageListener)
+				if err != nil {
+					log.Println("failed to serve:", err)
+				}
+			}(&wg)
+
 			wg.Wait()
 
-			return errors.New("all the services are stopped")
+			return errors.New("all services are stopped")
 		},
 	}
 }

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package resources;
+
+service Storage {
+    rpc SaveFile (FileStorageRequest) returns (FileStorageResponse) {}
+    rpc VerifyFileStorage (FileStorageVerificationRequest) returns (FileStorageVerificationResponse) {}
+    rpc GetFileBack (GetFileBackRequest) returns (GetFileBackResponse) {}
+}
+
+message FileStorageRequest {
+    // TODO: contract link/id/whatever with the same public key and with another verifiable signature
+    string name = 1;  // formatted id string
+    string target = 2;  // formatted target/url string
+    string requesterPublicKey = 3; // base64 or raw data?
+    string data = 4; // base64 or raw data?
+    string merkleTreeRoot = 5; // json blob
+    string signature = 6; // hex, base64 or raw string
+}
+
+message FileStorageResponse {
+    string id = 1;  // formatted id string
+    string getBackToken = 2; // hex, base64 or raw string
+    string verificationToken = 3; // hex, base64 or raw string
+}
+
+message FileStorageVerificationRequest {
+    string id = 1;  // formatted id string
+    string challenge = 2;  // hex, base64 or raw string
+    string verificationTokenSignature = 3;  // hex, base64 or raw string
+}
+
+message FileStorageVerificationResponse {
+    string id = 1; // formatted id string
+    string path = 2;  // formatted path string
+    string newVerificationToken = 3;  // hex, base64 or raw string
+}
+
+// TODO: add final verification?
+
+message GetFileBackRequest {
+    string id = 1; // formatted id string
+    string getBackTokenSignature = 2;  // hex, base64 or raw string
+}
+
+message GetFileBackResponse {
+    string id = 1;  // formatted id string
+    string invoiceID = 2; // formatted invoice id string
+    string data = 3; // // base64 or raw data?
+}

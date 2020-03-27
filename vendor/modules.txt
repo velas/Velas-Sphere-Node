@@ -73,6 +73,11 @@ github.com/ethereum/go-ethereum/rpc
 github.com/ethereum/go-ethereum/signer/core
 github.com/ethereum/go-ethereum/signer/storage
 github.com/ethereum/go-ethereum/trie
+# github.com/gabriel-vasile/mimetype v1.0.4
+## explicit
+github.com/gabriel-vasile/mimetype
+github.com/gabriel-vasile/mimetype/internal/json
+github.com/gabriel-vasile/mimetype/internal/matchers
 # github.com/gballet/go-libpcsclite v0.0.0-20190607065134-2772fd86a8ff
 github.com/gballet/go-libpcsclite
 # github.com/go-chi/chi v4.0.3+incompatible

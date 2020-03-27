@@ -8,7 +8,7 @@ import (
 )
 
 type Node struct {
-	Value    string
+	Value    string // TODO: []byte
 	Children [2]interface{}
 }
 

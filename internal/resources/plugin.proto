@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package resources;
+
+service Plugin {
+    rpc RequestJobExecution (JobExecutionRequest) returns (JobExecutionResponse) {}
+}
+
+message JobExecutionRequest {
+    string id = 1;
+    string input = 2;
+}
+
+message JobExecutionResponse {
+    string id = 1;
+    string output = 2;
+}

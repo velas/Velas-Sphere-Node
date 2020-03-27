@@ -13,7 +13,13 @@ COPY --from=build /config.json /config.json
 
 ENTRYPOINT ["/velas-sphere", "node"]
 
+# provider service
 EXPOSE 8081/tcp
+
+# storage service
+EXPOSE 8083/tcp
+
+# rest api
 EXPOSE 3000/tcp
 
 FROM alpine as velas-sphere-plugin
