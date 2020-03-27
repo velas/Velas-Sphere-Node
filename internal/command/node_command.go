@@ -31,9 +31,8 @@ func NewNodeCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			config := Config{
 				Node: NodeConfig{
-					PluginTarget:        "plugin:8082",
-					StoragePluginTarget: "storage:8083",
-					EthereumNodeTarget:  "http://127.0.0.1:8545",
+					PluginTarget:       "plugin:8082",
+					EthereumNodeTarget: "http://127.0.0.1:8545",
 					// TODO: price tolarance config
 					// TODO: keypair config
 				},
