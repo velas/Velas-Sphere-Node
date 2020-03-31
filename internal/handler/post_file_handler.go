@@ -3,7 +3,13 @@ package handler
 import (
 	"context"
 	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -24,6 +30,54 @@ func store(data string, challenges []string) (merkletree.Node, error) {
 	}
 
 	return merkletree.CalculateRoot(items...)
+}
+
+// TODO: improve
+func encrypt(key []byte, message []byte) (encmess []byte, err error) {
+	plainText := message
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return
+	}
+
+	//IV needs to be unique, but doesn't have to be secure.
+	//It's common to put it at the beginning of the ciphertext.
+	cipherText := make([]byte, aes.BlockSize+len(plainText))
+	iv := cipherText[:aes.BlockSize]
+	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
+		return
+	}
+
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(cipherText[aes.BlockSize:], plainText)
+
+	//returns to base64 encoded string
+	encmess = cipherText
+	return
+}
+
+// TODO: improve
+func decrypt(key []byte, cipherText []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, errors.New("Ciphertext block size is too short!")
+	}
+
+	if len(cipherText) < aes.BlockSize {
+		return nil, errors.New("Ciphertext block size is too short!")
+	}
+
+	//IV needs to be unique, but doesn't have to be secure.
+	//It's common to put it at the beginning of the ciphertext.
+	iv := cipherText[:aes.BlockSize]
+	cipherText = cipherText[aes.BlockSize:]
+
+	stream := cipher.NewCFBDecrypter(block, iv)
+	// XORKeyStream can work in-place if the two arguments are the same.
+	stream.XORKeyStream(cipherText, cipherText)
+
+	return cipherText, nil
 }
 
 func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Request) {
@@ -47,26 +101,22 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 
 		err = json.Unmarshal(requestBytes, &request)
 		if err != nil {
-			log.Println("failed to unmarshal the request body")
+			log.Println("failed to unmarshal the request body:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		// TODO: improve key management
+		// TODO: generate random key
+		aeskey := []byte("myawesomekey0000")
 
-		cipher, err := aes.NewCipher([]byte("mycoolkey"))
+		encryptedFile, err := encrypt(aeskey, request.Data)
 		if err != nil {
-			log.Println("failed to create the cipher")
+			log.Println("failed to encrypt")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-
-		encryptedFile := []byte{}
-
-		cipher.Encrypt(request.Data, encryptedFile)
 
 		// TODO: generate random challenges
-
 		challenges := []string{
 			"x",
 			"w",
@@ -81,19 +131,28 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		_ = merkleTree
+		merkleTreeJSONBytes, err := json.Marshal(merkleTree)
+		if err != nil {
+			log.Println("failed to marshal the merkle tree:", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
 		challengeToPath := map[string]string{}
 
 		for _, challenge := range challenges {
-			path, err := merkletree.FindPath(merkleTree, challenge)
+			hash := sha256.New()
+			hash.Write([]byte(string(encryptedFile) + challenge))
+			hashBytes := hash.Sum(nil)
+
+			path, err := merkletree.FindPath(merkleTree, hashBytes)
 			if err != nil {
-				log.Println("failed to find the challenge path")
+				log.Println("failed to find the challenge path:", err, hex.EncodeToString(hashBytes))
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 
-			// TODO: store challengeToPathMap?
+			// TODO: store challengeToPathMap into db?
 			challengeToPath[challenge] = strings.Join(path, ":")
 		}
 
@@ -107,25 +166,32 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 
 		c := resources.NewStorageClient(conn)
 
-		providerResponse, err := c.SaveFile(r.Context(), &resources.FileStorageRequest{
-			Name: request.Name,
-			Data: string(request.Data),
-		})
+		providerResponse, err := c.SaveFile(
+			r.Context(),
+			&resources.FileStorageRequest{
+				Name:           request.Name,
+				Data:           encryptedFile,
+				MerkleTreeRoot: merkleTreeJSONBytes,
+			},
+		)
 		if err != nil {
-			log.Println("failed to request task execution")
+			log.Println("failed to request file storage:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
+		id := providerResponse.GetId()
+		verificationToken := providerResponse.GetVerificationToken()
+
 		fileJSONBytes, err := json.Marshal(
 			entity.File{
-				ID:                providerResponse.GetId(),
-				DecryptionKey:     "cipher",     // TODO: replace by the real aes cipher
-				MerkleTreeRoot:    "merkleTree", // TODO: replace by the real merkle tree
-				Target:            request.Target,
-				GetBackToken:      providerResponse.GetGetBackToken(),
-				VerificationToken: providerResponse.GetVerificationToken(),
-				// RequesterPublicKey: do we really need to save it?
+				ID:                 id,
+				DecryptionKey:      aeskey,
+				MerkleTreeRoot:     merkleTree,
+				Target:             request.Target,
+				GetBackToken:       providerResponse.GetGetBackToken(),
+				VerificationToken:  verificationToken,
+				RequesterPublicKey: "requester_public_key", // TODO: replace by the real one
 			},
 		)
 		if err != nil {
@@ -134,7 +200,7 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		err = db.Put([]byte(providerResponse.GetId()), fileJSONBytes, nil)
+		err = db.Put([]byte("requested_files/"+id), fileJSONBytes, nil)
 		if err != nil {
 			log.Println("failed to save the file:", err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -151,7 +217,8 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			}()
 
 			challengeToPath := challengeToPath
-			id := providerResponse.GetId()
+			id := id
+			verificationToken := verificationToken
 
 			// TODO: send challenges and verify them
 			for challenge, path := range challengeToPath {
@@ -169,28 +236,41 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 					context.TODO(),
 					&resources.FileStorageVerificationRequest{
 						Id:                         id,
-						Challenge:                  challenge,
-						VerificationTokenSignature: "signature", // TODO: replace by a real signature
+						Challenge:                  []byte(challenge),
+						VerificationTokenSignature: verificationToken, // TODO: replace by a real signature
 					},
 				)
 
-				if verification.GetPath() != path {
-					// TODO: request ban!
-					log.Println("file storage verification failed!")
+				if err != nil {
+					log.Println("verification failed:", err)
 					return
 				}
+
+				if verification.GetPath() != path {
+					// TODO: request ban!
+					log.Println("file storage verification failed", path, "verification path:", verification.GetPath())
+					return
+				}
+
+				verificationToken = verification.GetNewVerificationToken()
+
+				log.Println("verification ok!")
 
 				time.Sleep(time.Minute)
 			}
 		}()
 
-		providerResponseJSONBytes, err := json.Marshal(providerResponse)
+		response, err := json.Marshal(
+			map[string]interface{}{
+				"id": id,
+			},
+		)
 		if err != nil {
 			log.Println("failed to marshal the provider response")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		w.Write(providerResponseJSONBytes)
+		w.Write(response)
 	}
 }

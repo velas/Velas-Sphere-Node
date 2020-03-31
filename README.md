@@ -8,7 +8,7 @@ This repository is an active WIP.
 
 ## Architecture 
 
-Velas Sphere is a P2P network of nodes communicating between each other using gRPC. Each node can act as a requester and provider (for task execution and file storage), has some plugins, and provides a RESTful API for UI support. The data is stored in a LevelDB database. In order to allow plugins to be written in any general-purpose language, they are physically decoupled from the node service using gRPC again, and each plugin is basically a separate service.
+Velas Sphere is a P2P network of nodes communicating between each other using gRPC. Each node can act as a requester and provider (for task execution and file storage), has some plugins (which are designed for supporting different kind of tasks), and provides a RESTful API for UI support. The node and storage data is stored in a LevelDB database. In order to allow plugins to be written in any general-purpose language, they are physically decoupled from the node service using gRPC again, and each plugin is basically a separate service.
 
 Here is how the node architecture looks like:
 
@@ -55,6 +55,33 @@ The response will be the following:
 ```json
 {"id":"1","output":"world"}
 ```
+
+File storage can be requested like this:
+
+```sh
+curl -X POST 127.0.0.1:3000/file -d \
+'{
+    "target": "node:8083",
+    "name": "my_awesome_file",
+    "data": "TXkgYXdlc29tZSBsb25nIGxvbmcgbG9uZyBzdHJpbmch"
+}'
+```
+
+It gets encrypted and sent to the remote node (in our case it is `node:8083`). The encryption key is generated using secure crypto random and stored in the LevelDB of the requester along with some other metadata like verification and get-back tokens etc.
+
+You can download the file using the following request:
+
+```sh
+curl -X GET 127.0.0.1:3000/file -d \
+'{
+    "target": "127.0.0.1:8083",
+    "id": "/my_awesome_file"
+}'
+```
+
+Consider storing the file on several remote hosts to ensure redundancy.
+
+It is not recommended to overwrite files.
 
 ## Contribution Guideline
 

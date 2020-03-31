@@ -1,6 +1,7 @@
 package merkletree
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -8,20 +9,34 @@ import (
 )
 
 type Node struct {
-	Value    string // TODO: []byte
-	Children [2]interface{}
+	Value    []byte
+	Children [2]*Node
 }
 
-func hash(s string) string {
+func hash(s string) []byte {
 	x := sha256.New()
 	x.Write([]byte(s))
-	return string(x.Sum(nil))
+	return x.Sum(nil)
+}
+
+func VerifyNode(root Node) bool {
+	if root.Children[0] != nil || root.Children[1] != nil {
+		reconstructedRoot := CalculatePair(*root.Children[0], *root.Children[1])
+		if bytes.Compare(reconstructedRoot.Value, root.Value) == 0 {
+			for _, child := range root.Children {
+				// we did already check for nil
+				return VerifyNode(*child)
+			}
+		}
+	}
+
+	return true
 }
 
 func CalculatePair(a, b Node) Node {
 	return Node{
-		Value:    hash(a.Value + b.Value),
-		Children: [2]interface{}{a, b},
+		Value:    []byte(hash(string(a.Value) + string(b.Value))),
+		Children: [2]*Node{&a, &b},
 	}
 }
 
@@ -76,39 +91,39 @@ func CalculateRoot(items ...string) (Node, error) {
 func PrintNode(n Node, prefix string) {
 	fmt.Printf("%s[%s]\n", prefix, hex.EncodeToString([]byte(n.Value)))
 	for _, child := range n.Children {
-		childNode, ok := child.(Node)
 		newPrefix := prefix + "-"
-		if ok {
-			PrintNode(childNode, newPrefix)
-		} else {
+		if child == nil {
 			fmt.Printf("%sX\n", newPrefix)
+			continue
 		}
+
+		PrintNode(*child, newPrefix)
 	}
 }
 
-func findPath(treeRoot Node, nodeHash string, prefix []string) ([]string, error) {
+func findPath(treeRoot Node, nodeHash []byte, prefix []string) ([]string, error) {
 	path := append(prefix, hex.EncodeToString([]byte(treeRoot.Value)))
 
-	if treeRoot.Value == nodeHash {
+	if bytes.Compare(treeRoot.Value, nodeHash) == 0 {
 		return path, nil
 	}
 
 	for _, child := range treeRoot.Children {
-		childNode, ok := child.(Node)
-		if !ok {
+		if child == nil {
 			continue
 		}
 
-		newPath, err := findPath(childNode, nodeHash, path)
+		newPath, err := findPath(*child, nodeHash, path)
 		if err != nil {
 			continue
 		}
+
 		return newPath, nil
 	}
 
 	return nil, errors.New("no such hash found")
 }
 
-func FindPath(treeRoot Node, nodeHash string) ([]string, error) {
+func FindPath(treeRoot Node, nodeHash []byte) ([]string, error) {
 	return findPath(treeRoot, nodeHash, nil)
 }

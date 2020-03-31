@@ -13,38 +13,38 @@ message FileStorageRequest {
     string name = 1;  // formatted id string
     string target = 2;  // formatted target/url string
     string requesterPublicKey = 3; // base64 or raw data?
-    string data = 4; // base64 or raw data?
-    string merkleTreeRoot = 5; // json blob
+    bytes  data = 4; // base64 or raw data?
+    bytes  merkleTreeRoot = 5; // json blob
     string signature = 6; // hex, base64 or raw string
 }
 
 message FileStorageResponse {
     string id = 1;  // formatted id string
-    string getBackToken = 2; // hex, base64 or raw string
-    string verificationToken = 3; // hex, base64 or raw string
+    bytes  getBackToken = 2; // hex, base64 or raw string
+    bytes  verificationToken = 3; // hex, base64 or raw string
 }
 
 message FileStorageVerificationRequest {
     string id = 1;  // formatted id string
-    string challenge = 2;  // hex, base64 or raw string
-    string verificationTokenSignature = 3;  // hex, base64 or raw string
+    bytes  challenge = 2;  // hex, base64 or raw string
+    bytes verificationTokenSignature = 3;  // hex, base64 or raw string
 }
 
 message FileStorageVerificationResponse {
     string id = 1; // formatted id string
     string path = 2;  // formatted path string
-    string newVerificationToken = 3;  // hex, base64 or raw string
+    bytes  newVerificationToken = 3;  // hex, base64 or raw string
 }
 
 // TODO: add final verification?
 
 message GetFileBackRequest {
     string id = 1; // formatted id string
-    string getBackTokenSignature = 2;  // hex, base64 or raw string
+    bytes  getBackTokenSignature = 2;  // hex, base64 or raw string
 }
 
 message GetFileBackResponse {
     string id = 1;  // formatted id string
     string invoiceID = 2; // formatted invoice id string
-    string data = 3; // // base64 or raw data?
+    bytes  data = 3; // // base64 or raw data?
 }

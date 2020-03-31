@@ -23,8 +23,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-// TODO: run file service
-
 func NewNodeCommand() *cobra.Command {
 	return &cobra.Command{
 		Use: "node",
@@ -34,7 +32,7 @@ func NewNodeCommand() *cobra.Command {
 					PluginTarget:       "plugin:8082",
 					EthereumNodeTarget: "http://127.0.0.1:8545",
 					// TODO: price tolarance config
-					// TODO: keypair config
+					// TODO: keypair config?
 				},
 			}
 
@@ -85,6 +83,15 @@ func NewNodeCommand() *cobra.Command {
 			r.Get(
 				"/info",
 				handler.NewGetInfoHandler(
+					handler.Config{
+						DB: db,
+					},
+				),
+			)
+
+			r.Get(
+				"/file",
+				handler.NewGetFileHandler(
 					handler.Config{
 						DB: db,
 					},
@@ -170,7 +177,13 @@ func NewNodeCommand() *cobra.Command {
 			}
 
 			storageServer := grpc.NewServer()
-			resources.RegisterStorageServer(storageServer, server.StorageServer{})
+			resources.RegisterStorageServer(
+				storageServer,
+				server.StorageServer{
+					// TODO: leveldb injection
+					DB: db,
+				},
+			)
 
 			go func(wg *sync.WaitGroup) {
 				log.Println("storage service started")

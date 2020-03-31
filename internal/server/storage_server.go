@@ -1,63 +1,105 @@
 package server
 
 import (
+	"bytes"
 	"context"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/sorenvonsarvort/velas-sphere/internal/entity"
 	"github.com/sorenvonsarvort/velas-sphere/internal/entropy"
+	"github.com/sorenvonsarvort/velas-sphere/internal/merkletree"
 	"github.com/sorenvonsarvort/velas-sphere/internal/resources"
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 type StorageServer struct {
-	// TODO: inject leveldb client
-	Storage map[string]entity.File
+	DB *leveldb.DB
 }
 
 func (s StorageServer) SaveFile(ctx context.Context, req *resources.FileStorageRequest) (*resources.FileStorageResponse, error) {
+	if s.DB == nil {
+		return nil, errors.New("no storage provided")
+	}
+
+	db := s.DB
+
+	name := req.GetName()
+	if name == "" {
+		return nil, errors.New("the name cannot be empty")
+	}
+
 	// TODO: add contract data to the request and check pricing
 
 	data := req.GetData()
 
-	reader := strings.NewReader(data) // ignoring error for brevity's sake
-	mime, err := mimetype.DetectReader(reader)
+	mime, err := mimetype.DetectReader(bytes.NewReader(data))
 	if err != nil {
 		return nil, fmt.Errorf("failed to detect mime type of the file: %w", err)
 	}
-	if mime.String() != "AES" {
+	if !mime.Is("application/octet-stream") {
 		return nil, errors.New("the file has invalid mime type")
 	}
 
+	// 7.99 bits per byte is a heuristic threshold
+	// 2.99 is used for testing
 	e := entropy.Shannon(data)
-	// 0.799 is a heuristic AES threshold
-	if e <= 0.799 {
-		return nil, errors.New("the file entropy is too low")
+	if e <= 2.99 {
+		return nil, errors.New("the file entropy is too low, consider larger file and ensure encryption")
 	}
 
-	// TODO: validate merkle tree
-	// TODO: use public key as suffix or other meta for id
-	// TODO: decode data
-	// TODO: validate public key
-	// TODO: validate signature
+	merkleTreeRootBytes := req.GetMerkleTreeRoot()
 
-	id := "some_prefix" + req.GetName()
-
-	// TODO: store file in the leveldb
-	// TODO: include proper data
-	s.Storage[id] = entity.File{
-		RequesterPublicKey: req.GetRequesterPublicKey(),
-		Data:               []byte(req.GetData()),
-		MerkleTreeRoot:     req.GetMerkleTreeRoot(),
-		GetBackToken:       "rand",
+	merkleTreeRoot := merkletree.Node{}
+	err = json.Unmarshal(merkleTreeRootBytes, &merkleTreeRoot)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal the merkle tree: %w", err)
 	}
 
-	// TODO: generate the get back token
-	// TODO: generate the verification token
-	getBackToken := "get_back_token"
-	verificationToken := "verification_token"
+	treeIsValid := merkletree.VerifyNode(merkleTreeRoot)
+	if !treeIsValid {
+		return nil, fmt.Errorf("invalid tree provided")
+	}
+
+	requesterPublicKey := req.GetRequesterPublicKey()
+
+	id := requesterPublicKey + "/" + req.GetName()
+
+	getBackToken := make([]byte, 16)
+	_, err = io.ReadFull(rand.Reader, getBackToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate a get back token: %w", err)
+	}
+
+	verificationToken := make([]byte, 16)
+	_, err = io.ReadFull(rand.Reader, verificationToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate a verification token: %w", err)
+	}
+
+	storedFileJSONBytes, err := json.Marshal(
+		entity.File{
+			RequesterPublicKey: requesterPublicKey,
+			Data:               data,
+			MerkleTreeRoot:     merkleTreeRoot,
+			GetBackToken:       getBackToken,
+			VerificationToken:  verificationToken,
+		},
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal the stored file: %w", err)
+	}
+
+	err = db.Put([]byte("stored_files/"+id), storedFileJSONBytes, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to store the file: %w", err)
+	}
 
 	return &resources.FileStorageResponse{
 		Id:                id,
@@ -67,10 +109,88 @@ func (s StorageServer) SaveFile(ctx context.Context, req *resources.FileStorageR
 }
 
 func (s StorageServer) GetFileBack(ctx context.Context, req *resources.GetFileBackRequest) (*resources.GetFileBackResponse, error) {
-	return nil, nil
+	if s.DB == nil {
+		return nil, errors.New("no storage provided")
+	}
+
+	db := s.DB
+
+	id := req.GetId()
+
+	rawFile, err := db.Get([]byte("stored_files/"+id), nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get the file: %w", err)
+	}
+
+	file := entity.File{}
+	err = json.Unmarshal(rawFile, &file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal the file: %w", err)
+	}
+
+	// TODO: why do we compare token with it's signature??? We need to verify it using the public key
+	if bytes.Compare(req.GetGetBackTokenSignature(), file.GetBackToken) != 0 {
+		return nil, errors.New("invalid get back token signature")
+	}
+
+	return &resources.GetFileBackResponse{
+		Id:        id,
+		InvoiceID: "my_awesome_invoice_id", // TODO: replace by a real invoice id
+		Data:      file.Data,
+	}, nil
 }
 
 func (s StorageServer) VerifyFileStorage(ctx context.Context, req *resources.FileStorageVerificationRequest) (*resources.FileStorageVerificationResponse, error) {
+	if s.DB == nil {
+		return nil, errors.New("no storage provided")
+	}
+
+	db := s.DB
+
+	id := req.GetId()
+
+	rawFile, err := db.Get([]byte("stored_files/"+id), nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get the file: %w", err)
+	}
+
+	file := entity.File{}
+	err = json.Unmarshal(rawFile, &file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal the file: %w", err)
+	}
+
+	// TODO: why do we compare token with it's signature??? We need to verify it using the public key
+	if bytes.Compare(req.GetVerificationTokenSignature(), file.VerificationToken) != 0 {
+		return nil, errors.New("invalid verification token signature")
+	}
+
+	// TODO: store last verification time?
 	// TODO: if got no verification requests during some time, generate invoice and set a deadline for file removal?
-	return nil, nil
+
+	x := sha256.New()
+	x.Write(append(file.Data, req.GetChallenge()...))
+
+	path, err := merkletree.FindPath(file.MerkleTreeRoot, x.Sum(nil))
+	if err != nil {
+		return nil, fmt.Errorf("failed to find the path: %w", err)
+	}
+
+	file.VerificationToken = []byte("new_verification_token")
+
+	updatedFileJSONBytes, err := json.Marshal(file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal the updated file: %w", err)
+	}
+
+	err = db.Put([]byte("stored_files/"+id), updatedFileJSONBytes, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to store the updated file: %w", err)
+	}
+
+	return &resources.FileStorageVerificationResponse{
+		Id:                   req.GetId(),
+		Path:                 strings.Join(path, ":"),
+		NewVerificationToken: file.VerificationToken,
+	}, nil
 }

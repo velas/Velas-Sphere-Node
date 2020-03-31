@@ -33,7 +33,7 @@ func proove(challenge, data string, root merkletree.Node, expectedPath string) b
 	hash.Write([]byte(data + challenge))
 	hashBytes := hash.Sum(nil)
 
-	path, err := merkletree.FindPath(root, string(hashBytes))
+	path, err := merkletree.FindPath(root, hashBytes)
 	if err != nil {
 		return false
 	}
@@ -56,7 +56,7 @@ func simpleDemo() {
 		return
 	}
 
-	path, err := merkletree.FindPath(root, string(hash))
+	path, err := merkletree.FindPath(root, hash)
 	if err != nil {
 		log.Println("failed to find the hash:", err)
 		return

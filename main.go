@@ -3,10 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 
 	proto "github.com/golang/protobuf/proto"
 	"github.com/sorenvonsarvort/velas-sphere/internal/command"
+	"github.com/sorenvonsarvort/velas-sphere/internal/entropy"
 	"github.com/sorenvonsarvort/velas-sphere/internal/resources"
 	"github.com/spf13/cobra"
 )
@@ -27,6 +30,24 @@ func serializationDemo() {
 	}
 
 	fmt.Println(newTest.GetId())
+}
+
+func entropyDemo() {
+	data := []byte{}
+
+	for i := 0; i < 256; i++ {
+		data = append(data, byte(i))
+	}
+
+	fmt.Println(entropy.Shannon(data))
+}
+
+func entropyFromFileDemo(path string) {
+	file, _ := os.Open(path)
+	defer file.Close()
+	fileBytes, _ := ioutil.ReadAll(file)
+
+	fmt.Println(entropy.Shannon(fileBytes))
 }
 
 func main() {
