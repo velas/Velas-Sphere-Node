@@ -39,6 +39,8 @@ $ docker build --target velas-sphere-node -t velas-sphere-node-local .
 $ docker-compose up -d
 ```
 
+## Task execution
+
 You can request task execution via a simple RESTful API. The following example shows how to request task execution on a dockerized deployment using a single node:
 
 ``` sh 
@@ -55,6 +57,8 @@ The response will be the following:
 ```json
 {"id":"1","output":"world"}
 ```
+
+## File storage
 
 File storage can be requested like this:
 
