@@ -6,13 +6,30 @@ Velas Sphere is an opensource initiative and ecosystem, allowing usual customers
 
 This repository is an active WIP.
 
+| Component                        | Status      |
+|----------------------------------|-------------|
+| Smart Contract                   | DONE        |
+| Smart Contract Integration       | IN PROGRESS |
+| Storage Protocol                 | DONE        |
+| Storage Provider Implementation  | DONE        |
+| Storage Requester Implementation | DONE        |
+| Task Execution Protocol          | DONE        |
+| Task Provider Implementation     | DONE        |
+| Task Requester Implementation    | DONE        |
+| Demo Plugin                      | DONE        |
+| ML Plugin                        | IN PROGRESS |
+| REST API                         | DONE        |
+| UI                               | IN PROGRESS |
+
+Total Progress: ~60%
+
 ## Architecture 
 
 Velas Sphere is a P2P network of nodes communicating between each other using gRPC. Each node can act as a requester and provider (for task execution and file storage), has some plugins (which are designed for supporting different kind of tasks), and provides a RESTful API for UI support. The node and storage data is stored in a LevelDB database. In order to allow plugins to be written in any general-purpose language, they are physically decoupled from the node service using gRPC again, and each plugin is basically a separate service.
 
 Here is how the node architecture looks like:
 
-![](assets/velas-sphere-node-architecture-3.0-github.png)
+![](assets/velas-sphere-node-architecture-4.0-github.png)
 
 ## Economy
 
