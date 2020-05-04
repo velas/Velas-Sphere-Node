@@ -5,6 +5,7 @@ Velas Sphere is an opensource initiative and ecosystem, allowing usual customers
 ## Demos
 
 `demo` folder contains WIP demo on video/audio stream decoding
+
 `streaming` folder contains streaming demo with file splitting and video streaming demultiplexing
 
 ## Status
