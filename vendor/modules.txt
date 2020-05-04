@@ -1,3 +1,9 @@
+# github.com/BurntSushi/xgb v0.0.0-20200324125942-20f126ea2843
+## explicit
+github.com/BurntSushi/xgb
+github.com/BurntSushi/xgb/shm
+github.com/BurntSushi/xgb/xinerama
+github.com/BurntSushi/xgb/xproto
 # github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6
 github.com/StackExchange/wmi
 # github.com/VictoriaMetrics/fastcache v1.5.3
@@ -80,6 +86,13 @@ github.com/gabriel-vasile/mimetype/internal/json
 github.com/gabriel-vasile/mimetype/internal/matchers
 # github.com/gballet/go-libpcsclite v0.0.0-20190607065134-2772fd86a8ff
 github.com/gballet/go-libpcsclite
+# github.com/gen2brain/shm v0.0.0-20200228170931-49f9650110c5
+## explicit
+github.com/gen2brain/shm
+# github.com/gen2brain/x264-go v0.0.0-20200420144301-321943fe3a4a
+## explicit
+github.com/gen2brain/x264-go
+github.com/gen2brain/x264-go/x264c
 # github.com/go-chi/chi v4.0.3+incompatible
 ## explicit
 github.com/go-chi/chi
@@ -118,12 +131,20 @@ github.com/inconshreveable/mousetrap
 github.com/jackpal/go-nat-pmp
 # github.com/karalabe/usb v0.0.0-20190919080040-51dc0efba356
 github.com/karalabe/usb
+# github.com/kbinani/screenshot v0.0.0-20191211154542-3a185f1ce18f
+## explicit
+github.com/kbinani/screenshot
+github.com/kbinani/screenshot/internal/util
+github.com/kbinani/screenshot/internal/xwindow
 # github.com/keybase/go-codec v0.0.0-20180928230036-164397562123
 ## explicit
 github.com/keybase/go-codec/codec
 # github.com/keybase/go-merkle-tree v0.0.0-20200218013905-59a254fdbe43
 ## explicit
 github.com/keybase/go-merkle-tree
+# github.com/lxn/win v0.0.0-20191128105842-2da648fda5b4
+## explicit
+github.com/lxn/win
 # github.com/mattn/go-runewidth v0.0.4
 github.com/mattn/go-runewidth
 # github.com/olekukonko/tablewriter v0.0.2-0.20190409134802-7e037d187b0c

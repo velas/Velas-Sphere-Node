@@ -5,13 +5,17 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gabriel-vasile/mimetype"
+	"github.com/sorenvonsarvort/velas-sphere/internal/contract"
 	"github.com/sorenvonsarvort/velas-sphere/internal/entity"
 	"github.com/sorenvonsarvort/velas-sphere/internal/entropy"
 	"github.com/sorenvonsarvort/velas-sphere/internal/merkletree"
@@ -20,7 +24,8 @@ import (
 )
 
 type StorageServer struct {
-	DB *leveldb.DB
+	DB                 *leveldb.DB
+	Ethdepositcontract *contract.Ethdepositcontract
 }
 
 func (s StorageServer) SaveFile(ctx context.Context, req *resources.FileStorageRequest) (*resources.FileStorageResponse, error) {
@@ -69,7 +74,7 @@ func (s StorageServer) SaveFile(ctx context.Context, req *resources.FileStorageR
 
 	requesterPublicKey := req.GetRequesterPublicKey()
 
-	id := requesterPublicKey + "/" + req.GetName()
+	id := hex.EncodeToString(requesterPublicKey) + "/" + req.GetName()
 
 	getBackToken := make([]byte, 16)
 	_, err = io.ReadFull(rand.Reader, getBackToken)
@@ -112,8 +117,12 @@ func (s StorageServer) GetFileBack(ctx context.Context, req *resources.GetFileBa
 	if s.DB == nil {
 		return nil, errors.New("no storage provided")
 	}
-
 	db := s.DB
+
+	if s.Ethdepositcontract == nil {
+		return nil, errors.New("no contract instance injected")
+	}
+	ethDepositContract := s.Ethdepositcontract
 
 	id := req.GetId()
 
@@ -133,9 +142,14 @@ func (s StorageServer) GetFileBack(ctx context.Context, req *resources.GetFileBa
 		return nil, errors.New("invalid get back token signature")
 	}
 
+	invoiceTx, err := ethDepositContract.CreateInvoice(nil, nil, nil, common.Address{}, nil, nil, nil, nil)
+	if err != nil {
+		return nil, fmt.Errorf("invoice creation failed: %w", err)
+	}
+
 	return &resources.GetFileBackResponse{
 		Id:        id,
-		InvoiceID: "my_awesome_invoice_id", // TODO: replace by a real invoice id
+		InvoiceID: invoiceTx.Hash().String(), // TODO: replace by a real invoice id
 		Data:      file.Data,
 	}, nil
 }
@@ -160,8 +174,17 @@ func (s StorageServer) VerifyFileStorage(ctx context.Context, req *resources.Fil
 		return nil, fmt.Errorf("failed to unmarshal the file: %w", err)
 	}
 
+	verificationTokenHash := crypto.Keccak256Hash(file.VerificationToken)
+
+	sigPublicKey, err := crypto.Ecrecover(verificationTokenHash.Bytes(), req.GetVerificationTokenSignature())
+	if err != nil {
+		return nil, fmt.Errorf("filed to recover the public key: %w", err)
+	}
+
+	matches := bytes.Equal(sigPublicKey, file.RequesterPublicKey)
+
 	// TODO: why do we compare token with it's signature??? We need to verify it using the public key
-	if bytes.Compare(req.GetVerificationTokenSignature(), file.VerificationToken) != 0 {
+	if !matches {
 		return nil, errors.New("invalid verification token signature")
 	}
 

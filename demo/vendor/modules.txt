@@ -1,0 +1,23 @@
+# github.com/BurntSushi/xgb v0.0.0-20200324125942-20f126ea2843
+## explicit
+github.com/BurntSushi/xgb
+github.com/BurntSushi/xgb/shm
+github.com/BurntSushi/xgb/xinerama
+github.com/BurntSushi/xgb/xproto
+# github.com/gen2brain/shm v0.0.0-20200228170931-49f9650110c5
+## explicit
+github.com/gen2brain/shm
+# github.com/gen2brain/x264-go v0.0.0-20200420144301-321943fe3a4a
+## explicit
+github.com/gen2brain/x264-go
+github.com/gen2brain/x264-go/x264c
+# github.com/kbinani/screenshot v0.0.0-20191211154542-3a185f1ce18f
+## explicit
+github.com/kbinani/screenshot
+github.com/kbinani/screenshot/internal/util
+github.com/kbinani/screenshot/internal/xwindow
+# github.com/lxn/win v0.0.0-20191128105842-2da648fda5b4
+## explicit
+github.com/lxn/win
+# golang.org/x/sys v0.0.0-20190904154756-749cb33beabd
+golang.org/x/sys/windows

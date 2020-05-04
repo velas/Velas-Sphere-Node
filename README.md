@@ -2,6 +2,11 @@
 
 Velas Sphere is an opensource initiative and ecosystem, allowing usual customers to perform resource-demanding tasks using storage, CPU, and GPU sharing concepts.
 
+## Demos
+
+`demo` folder contains WIP demo on video/audio stream decoding
+`streaming` folder contains streaming demo with file splitting and video streaming demultiplexing
+
 ## Status
 
 This repository is an active WIP.

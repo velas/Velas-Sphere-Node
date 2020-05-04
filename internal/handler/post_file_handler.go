@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/ecdsa"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -16,6 +17,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/sorenvonsarvort/velas-sphere/internal/entity"
 	"github.com/sorenvonsarvort/velas-sphere/internal/merkletree"
 	"github.com/sorenvonsarvort/velas-sphere/internal/resources"
@@ -87,8 +89,24 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-
 		db := config.DB
+
+		if config.PrivateKey == nil {
+			log.Println("no private key provided")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		privateKey := config.PrivateKey
+		publicKey := privateKey.Public()
+
+		publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+		if !ok {
+			log.Println("error casting public key to ECDSA")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		publicKeyBytes := crypto.FromECDSAPub(publicKeyECDSA)
 
 		requestBytes, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -191,7 +209,7 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 				Target:             request.Target,
 				GetBackToken:       providerResponse.GetGetBackToken(),
 				VerificationToken:  verificationToken,
-				RequesterPublicKey: "requester_public_key", // TODO: replace by the real one
+				RequesterPublicKey: publicKeyBytes,
 			},
 		)
 		if err != nil {
@@ -232,12 +250,21 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 
 				c := resources.NewStorageClient(conn)
 
+				verificationTokenHash := crypto.Keccak256Hash(verificationToken)
+
+				signature, err := crypto.Sign(verificationTokenHash.Bytes(), privateKey)
+				if err != nil {
+					log.Println("failed to sign the verification token")
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+
 				verification, err := c.VerifyFileStorage(
 					context.TODO(),
 					&resources.FileStorageVerificationRequest{
 						Id:                         id,
 						Challenge:                  []byte(challenge),
-						VerificationTokenSignature: verificationToken, // TODO: replace by a real signature
+						VerificationTokenSignature: signature,
 					},
 				)
 

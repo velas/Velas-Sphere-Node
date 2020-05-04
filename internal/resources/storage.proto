@@ -12,10 +12,9 @@ message FileStorageRequest {
     // TODO: contract link/id/whatever with the same public key and with another verifiable signature
     string name = 1;  // formatted id string
     string target = 2;  // formatted target/url string
-    string requesterPublicKey = 3; // base64 or raw data?
+    bytes  requesterPublicKey = 3; // base64 or raw data?
     bytes  data = 4; // base64 or raw data?
     bytes  merkleTreeRoot = 5; // json blob
-    string signature = 6; // hex, base64 or raw string
 }
 
 message FileStorageResponse {
