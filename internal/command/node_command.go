@@ -7,9 +7,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/pkg/errors"
-	"github.com/sorenvonsarvort/velas-sphere/internal/initializer"
 	"github.com/sorenvonsarvort/velas-sphere/internal/service"
 	"github.com/spf13/cobra"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -21,8 +19,8 @@ func NewNodeCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			config := Config{
 				Node: NodeConfig{
-					PluginTarget:       "plugin:8082",
-					EthereumNodeTarget: "http://127.0.0.1:8545",
+					PluginTarget: "plugin:8082",
+					// EthereumNodeTarget: "http://127.0.0.1:8545",
 					// TODO: price tolarance config
 				},
 			}
@@ -37,12 +35,12 @@ func NewNodeCommand() *cobra.Command {
 				}
 			}
 
-			client, err := ethclient.Dial(config.Node.EthereumNodeTarget)
-			if err != nil {
-				log.Fatal(err)
-			}
+			// client, err := ethclient.Dial(config.Node.EthereumNodeTarget)
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
 
-			contractBuilder := initializer.ContractInitializer(client, config.Node.EthdepositcontractAddress)
+			// contractBuilder := initializer.ContractInitializer(client, config.Node.EthdepositcontractAddress)
 
 			db, err := leveldb.OpenFile("db", nil)
 			if err != nil {
@@ -55,7 +53,7 @@ func NewNodeCommand() *cobra.Command {
 			mux := service.Mux(
 				&wg,
 				map[string]service.Service{
-					"storage":   service.Storage(db, contractBuilder),
+					"storage":   service.Storage(db, nil),
 					"streaming": service.Streaming,
 				},
 			)

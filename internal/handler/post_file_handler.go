@@ -1,25 +1,21 @@
 package handler
 
 import (
-	"crypto/ecdsa"
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/ethereum/go-ethereum/crypto"
 )
 
 func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		initContract := config.ContractInitializer
-		if initContract == nil {
-			return
-		}
+		// initContract := config.ContractInitializer
+		// if initContract == nil {
+		// 	return
+		// }
 
 		randomID := make([]byte, 16)
 		_, err := io.ReadFull(rand.Reader, randomID)
@@ -45,48 +41,48 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			// return
 		}
 
-		rawKey := r.FormValue("key")
+		// rawKey := r.FormValue("key")
 
-		keyBytes, err := hex.DecodeString(rawKey)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to decode the key hex:", err)
-			return
-		}
+		// keyBytes, err := hex.DecodeString(rawKey)
+		// if err != nil {
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	log.Println("failed to decode the key hex:", err)
+		// 	return
+		// }
 
-		privateKey, err := crypto.ToECDSA(keyBytes)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to decode the key:", err)
-			return
-		}
+		// privateKey, err := crypto.ToECDSA(keyBytes)
+		// if err != nil {
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	log.Println("failed to decode the key:", err)
+		// 	return
+		// }
 
-		ethDepositContract, err := initContract(privateKey)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to init the contract:", err)
-			return
-		}
+		// ethDepositContract, err := initContract(privateKey)
+		// if err != nil {
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	log.Println("failed to init the contract:", err)
+		// 	return
+		// }
 
-		publicKey := privateKey.Public()
-		publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-		if !ok {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("got invalid public key")
-			return
-		}
+		// publicKey := privateKey.Public()
+		// publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+		// if !ok {
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	log.Println("got invalid public key")
+		// 	return
+		// }
 
-		fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+		// fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
 		// TODO: check node registration
 
-		registerTx, err := ethDepositContract.RegisterNode(nil, fromAddress, nil, nil, nil, nil)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to register the node:", err)
-			return
-		}
-		_ = registerTx
+		// registerTx, err := ethDepositContract.RegisterNode(nil, fromAddress, nil, nil, nil, nil)
+		// if err != nil {
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	log.Println("failed to register the node:", err)
+		// 	return
+		// }
+		// _ = registerTx
 
 		source, _, err := r.FormFile("file")
 
@@ -99,17 +95,17 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		tx, err := ethDepositContract.CreateInvoice(nil, nil, nil, fromAddress, nil, nil, nil, nil)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to create the invoice:", err)
-			return
-		}
+		// tx, err := ethDepositContract.CreateInvoice(nil, nil, nil, fromAddress, nil, nil, nil, nil)
+		// if err != nil {
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	log.Println("failed to create the invoice:", err)
+		// 	return
+		// }
 
 		responseBytes, err := json.Marshal(
 			map[string]interface{}{
-				"id":      id,
-				"invoice": tx.Hash,
+				"id": id,
+				// "invoice": tx.Hash,
 			},
 		)
 
