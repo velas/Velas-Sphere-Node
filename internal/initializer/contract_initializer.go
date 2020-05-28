@@ -10,7 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/sorenvonsarvort/velas-sphere/internal/contract"
+	ethdepositcontract "github.com/velas/Velas-Sphere-Contracts/ethdepositcontract"
 )
 
 func TransactOptions(ethClient *ethclient.Client) func(key *ecdsa.PrivateKey) (*bind.TransactOpts, error) {
@@ -38,8 +38,8 @@ func TransactOptions(ethClient *ethclient.Client) func(key *ecdsa.PrivateKey) (*
 	}
 }
 
-func ContractInitializer(ethClient *ethclient.Client, address common.Address) (*contract.Ethdepositcontract, error) {
-	c, err := contract.NewEthdepositcontract(address, ethClient)
+func ContractInitializer(ethClient *ethclient.Client, address common.Address) (*ethdepositcontract.Ethdepositcontract, error) {
+	c, err := ethdepositcontract.NewEthdepositcontract(address, ethClient)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create new deposit contract: %w", err)
 	}

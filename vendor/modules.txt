@@ -161,9 +161,9 @@ github.com/syndtr/goleveldb/leveldb/util
 # github.com/tyler-smith/go-bip39 v1.0.1-0.20181017060643-dbb3b84ba2ef
 github.com/tyler-smith/go-bip39
 github.com/tyler-smith/go-bip39/wordlists
-# github.com/velas/Velas-Sphere-Contracts v0.0.0-20200528102751-5349840267b7
+# github.com/velas/Velas-Sphere-Contracts v0.0.0-20200528105818-ad2bc10599b3
 ## explicit
-github.com/velas/Velas-Sphere-Contracts
+github.com/velas/Velas-Sphere-Contracts/ethdepositcontract
 # github.com/wsddn/go-ecdh v0.0.0-20161211032359-48726bab9208
 github.com/wsddn/go-ecdh
 # golang.org/x/crypto v0.0.0-20200311171314-f7b00557c8c4

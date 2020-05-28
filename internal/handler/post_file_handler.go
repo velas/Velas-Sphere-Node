@@ -13,8 +13,6 @@ import (
 	"os"
 
 	"github.com/ethereum/go-ethereum/crypto"
-
-	ethdepositcontract "github.com/velas/Velas-Sphere-Contracts"
 )
 
 func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Request) {
@@ -25,8 +23,6 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 		}
 
 		ethDepositContract := config.Contract
-
-		_ = ethdepositcontract.EthdepositcontractABI
 
 		randomID := make([]byte, 16)
 		_, err := io.ReadFull(rand.Reader, randomID)
@@ -89,7 +85,7 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 		membershipFee := int64(100000000000)
 		registerOpts.Value = big.NewInt(membershipFee)
 
-		registerTx, err := ethDepositContract.RegisterNode(registerOpts, fromAddress, nil, nil, nil, nil)
+		registerTx, err := ethDepositContract.RegisterNode(registerOpts, fromAddress, fromAddress)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Println("failed to register the node:", err)
@@ -115,7 +111,7 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		tx, err := ethDepositContract.CreateInvoice(invoiceOpts, nil, nil, fromAddress, nil, nil, nil, nil)
+		tx, err := ethDepositContract.CreateInvoice(invoiceOpts, fromAddress, big.NewInt(100000))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Println("failed to create the invoice:", err)

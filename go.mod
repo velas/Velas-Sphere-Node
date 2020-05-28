@@ -11,6 +11,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.0.0
 	github.com/syndtr/goleveldb v1.0.1-0.20190923125748-758128399b1d
-	github.com/velas/Velas-Sphere-Contracts v0.0.0-20200528102751-5349840267b7
+	github.com/velas/Velas-Sphere-Contracts v0.0.0-20200528105818-ad2bc10599b3
 	google.golang.org/grpc v1.29.1
 )

@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package contracts
+package ethdepositcontract
 
 import (
 	"math/big"
@@ -20,7 +20,6 @@ var (
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
-	// _ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -296,21 +295,21 @@ func (_Ethdepositcontract *EthdepositcontractTransactorSession) CreateInvoice(us
 
 // DepositWithNodes is a paid mutator transaction binding the contract method 0x8e8b45c6.
 //
-// Solidity: function depositWithNodes(uint256 _pull, uint256 _places) returns()
+// Solidity: function depositWithNodes(uint256 _pull, uint256 _places) payable returns()
 func (_Ethdepositcontract *EthdepositcontractTransactor) DepositWithNodes(opts *bind.TransactOpts, _pull *big.Int, _places *big.Int) (*types.Transaction, error) {
 	return _Ethdepositcontract.contract.Transact(opts, "depositWithNodes", _pull, _places)
 }
 
 // DepositWithNodes is a paid mutator transaction binding the contract method 0x8e8b45c6.
 //
-// Solidity: function depositWithNodes(uint256 _pull, uint256 _places) returns()
+// Solidity: function depositWithNodes(uint256 _pull, uint256 _places) payable returns()
 func (_Ethdepositcontract *EthdepositcontractSession) DepositWithNodes(_pull *big.Int, _places *big.Int) (*types.Transaction, error) {
 	return _Ethdepositcontract.Contract.DepositWithNodes(&_Ethdepositcontract.TransactOpts, _pull, _places)
 }
 
 // DepositWithNodes is a paid mutator transaction binding the contract method 0x8e8b45c6.
 //
-// Solidity: function depositWithNodes(uint256 _pull, uint256 _places) returns()
+// Solidity: function depositWithNodes(uint256 _pull, uint256 _places) payable returns()
 func (_Ethdepositcontract *EthdepositcontractTransactorSession) DepositWithNodes(_pull *big.Int, _places *big.Int) (*types.Transaction, error) {
 	return _Ethdepositcontract.Contract.DepositWithNodes(&_Ethdepositcontract.TransactOpts, _pull, _places)
 }
@@ -359,21 +358,21 @@ func (_Ethdepositcontract *EthdepositcontractTransactorSession) ProposePricing(_
 
 // RegisterNode is a paid mutator transaction binding the contract method 0xe708013f.
 //
-// Solidity: function registerNode(address staking_addr, address mining_addr) returns()
+// Solidity: function registerNode(address staking_addr, address mining_addr) payable returns()
 func (_Ethdepositcontract *EthdepositcontractTransactor) RegisterNode(opts *bind.TransactOpts, staking_addr common.Address, mining_addr common.Address) (*types.Transaction, error) {
 	return _Ethdepositcontract.contract.Transact(opts, "registerNode", staking_addr, mining_addr)
 }
 
 // RegisterNode is a paid mutator transaction binding the contract method 0xe708013f.
 //
-// Solidity: function registerNode(address staking_addr, address mining_addr) returns()
+// Solidity: function registerNode(address staking_addr, address mining_addr) payable returns()
 func (_Ethdepositcontract *EthdepositcontractSession) RegisterNode(staking_addr common.Address, mining_addr common.Address) (*types.Transaction, error) {
 	return _Ethdepositcontract.Contract.RegisterNode(&_Ethdepositcontract.TransactOpts, staking_addr, mining_addr)
 }
 
 // RegisterNode is a paid mutator transaction binding the contract method 0xe708013f.
 //
-// Solidity: function registerNode(address staking_addr, address mining_addr) returns()
+// Solidity: function registerNode(address staking_addr, address mining_addr) payable returns()
 func (_Ethdepositcontract *EthdepositcontractTransactorSession) RegisterNode(staking_addr common.Address, mining_addr common.Address) (*types.Transaction, error) {
 	return _Ethdepositcontract.Contract.RegisterNode(&_Ethdepositcontract.TransactOpts, staking_addr, mining_addr)
 }
@@ -397,4 +396,25 @@ func (_Ethdepositcontract *EthdepositcontractSession) Withdraw(addr common.Addre
 // Solidity: function withdraw(address addr) returns()
 func (_Ethdepositcontract *EthdepositcontractTransactorSession) Withdraw(addr common.Address) (*types.Transaction, error) {
 	return _Ethdepositcontract.Contract.Withdraw(&_Ethdepositcontract.TransactOpts, addr)
+}
+
+// Fallback is a paid mutator transaction binding the contract fallback function.
+//
+// Solidity: fallback() payable returns()
+func (_Ethdepositcontract *EthdepositcontractTransactor) Fallback(opts *bind.TransactOpts, calldata []byte) (*types.Transaction, error) {
+	return _Ethdepositcontract.contract.RawTransact(opts, calldata)
+}
+
+// Fallback is a paid mutator transaction binding the contract fallback function.
+//
+// Solidity: fallback() payable returns()
+func (_Ethdepositcontract *EthdepositcontractSession) Fallback(calldata []byte) (*types.Transaction, error) {
+	return _Ethdepositcontract.Contract.Fallback(&_Ethdepositcontract.TransactOpts, calldata)
+}
+
+// Fallback is a paid mutator transaction binding the contract fallback function.
+//
+// Solidity: fallback() payable returns()
+func (_Ethdepositcontract *EthdepositcontractTransactorSession) Fallback(calldata []byte) (*types.Transaction, error) {
+	return _Ethdepositcontract.Contract.Fallback(&_Ethdepositcontract.TransactOpts, calldata)
 }
