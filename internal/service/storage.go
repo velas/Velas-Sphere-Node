@@ -1,18 +1,15 @@
 package service
 
 import (
-	"crypto/ecdsa"
 	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/sorenvonsarvort/velas-sphere/internal/contract"
 	"github.com/sorenvonsarvort/velas-sphere/internal/handler"
-	"github.com/syndtr/goleveldb/leveldb"
 )
 
-func Storage(db *leveldb.DB, contractInitializer func(key *ecdsa.PrivateKey) (*contract.Ethdepositcontract, error)) Service {
+func Storage(handlerConfig handler.Config) Service {
 	return func() error {
 		r := chi.NewRouter()
 
@@ -22,11 +19,6 @@ func Storage(db *leveldb.DB, contractInitializer func(key *ecdsa.PrivateKey) (*c
 				"application/json",
 			),
 		)
-
-		handlerConfig := handler.Config{
-			DB:                  db,
-			ContractInitializer: contractInitializer,
-		}
 
 		r.Get(
 			"/file/{id}",

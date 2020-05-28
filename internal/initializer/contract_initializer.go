@@ -13,8 +13,8 @@ import (
 	"github.com/sorenvonsarvort/velas-sphere/internal/contract"
 )
 
-func ContractInitializer(ethClient *ethclient.Client, address common.Address) func(key *ecdsa.PrivateKey) (*contract.Ethdepositcontract, error) {
-	return func(key *ecdsa.PrivateKey) (*contract.Ethdepositcontract, error) {
+func TransactOptions(ethClient *ethclient.Client) func(key *ecdsa.PrivateKey) (*bind.TransactOpts, error) {
+	return func(key *ecdsa.PrivateKey) (*bind.TransactOpts, error) {
 		publicKey := key.PublicKey
 
 		fromAddress := crypto.PubkeyToAddress(publicKey)
@@ -34,11 +34,15 @@ func ContractInitializer(ethClient *ethclient.Client, address common.Address) fu
 		auth.GasLimit = uint64(300000) // in units
 		auth.GasPrice = gasPrice
 
-		c, err := contract.NewEthdepositcontract(address, ethClient)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create new deposit contract: %w", err)
-		}
-
-		return c, nil
+		return auth, nil
 	}
+}
+
+func ContractInitializer(ethClient *ethclient.Client, address common.Address) (*contract.Ethdepositcontract, error) {
+	c, err := contract.NewEthdepositcontract(address, ethClient)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new deposit contract: %w", err)
+	}
+
+	return c, nil
 }

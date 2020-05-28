@@ -8,18 +8,25 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"math/big"
 	"net/http"
 	"os"
 
 	"github.com/ethereum/go-ethereum/crypto"
+
+	ethdepositcontract "github.com/velas/Velas-Sphere-Contracts"
 )
 
 func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		initContract := config.ContractInitializer
-		if initContract == nil {
+		initOptions := config.TransactOptionsInitializer
+		if initOptions == nil {
 			return
 		}
+
+		ethDepositContract := config.Contract
+
+		_ = ethdepositcontract.EthdepositcontractABI
 
 		randomID := make([]byte, 16)
 		_, err := io.ReadFull(rand.Reader, randomID)
@@ -61,13 +68,6 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		ethDepositContract, err := initContract(privateKey)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to init the contract:", err)
-			return
-		}
-
 		publicKey := privateKey.Public()
 		publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 		if !ok {
@@ -80,7 +80,16 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 
 		// TODO: check node registration
 
-		registerTx, err := ethDepositContract.RegisterNode(nil, fromAddress, nil, nil, nil, nil)
+		registerOpts, err := initOptions(privateKey)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("failed to init opts")
+			return
+		}
+		membershipFee := int64(100000000000)
+		registerOpts.Value = big.NewInt(membershipFee)
+
+		registerTx, err := ethDepositContract.RegisterNode(registerOpts, fromAddress, nil, nil, nil, nil)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Println("failed to register the node:", err)
@@ -99,7 +108,14 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		tx, err := ethDepositContract.CreateInvoice(nil, nil, nil, fromAddress, nil, nil, nil, nil)
+		invoiceOpts, err := initOptions(privateKey)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("failed to init opts")
+			return
+		}
+
+		tx, err := ethDepositContract.CreateInvoice(invoiceOpts, nil, nil, fromAddress, nil, nil, nil, nil)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Println("failed to create the invoice:", err)

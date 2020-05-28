@@ -1,8 +1,6 @@
-# github.com/BurntSushi/xgb v0.0.0-20200324125942-20f126ea2843
-## explicit
 # github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6
 github.com/StackExchange/wmi
-# github.com/VictoriaMetrics/fastcache v1.5.3
+# github.com/VictoriaMetrics/fastcache v1.5.7
 github.com/VictoriaMetrics/fastcache
 # github.com/aristanetworks/goarista v0.0.0-20170210015632-ea17b1a17847
 github.com/aristanetworks/goarista/monotime
@@ -19,7 +17,7 @@ github.com/edsrzf/mmap-go
 # github.com/elastic/gosigar v0.8.1-0.20180330100440-37f05ff46ffa
 github.com/elastic/gosigar
 github.com/elastic/gosigar/sys/windows
-# github.com/ethereum/go-ethereum v1.9.12
+# github.com/ethereum/go-ethereum v1.9.14
 ## explicit
 github.com/ethereum/go-ethereum
 github.com/ethereum/go-ethereum/accounts
@@ -44,6 +42,7 @@ github.com/ethereum/go-ethereum/core
 github.com/ethereum/go-ethereum/core/bloombits
 github.com/ethereum/go-ethereum/core/rawdb
 github.com/ethereum/go-ethereum/core/state
+github.com/ethereum/go-ethereum/core/state/snapshot
 github.com/ethereum/go-ethereum/core/types
 github.com/ethereum/go-ethereum/core/vm
 github.com/ethereum/go-ethereum/crypto
@@ -75,18 +74,9 @@ github.com/ethereum/go-ethereum/rpc
 github.com/ethereum/go-ethereum/signer/core
 github.com/ethereum/go-ethereum/signer/storage
 github.com/ethereum/go-ethereum/trie
-# github.com/gabriel-vasile/mimetype v1.0.4
-## explicit
-github.com/gabriel-vasile/mimetype
-github.com/gabriel-vasile/mimetype/internal/json
-github.com/gabriel-vasile/mimetype/internal/matchers
 # github.com/gballet/go-libpcsclite v0.0.0-20190607065134-2772fd86a8ff
 github.com/gballet/go-libpcsclite
-# github.com/gen2brain/shm v0.0.0-20200228170931-49f9650110c5
-## explicit
-# github.com/gen2brain/x264-go v0.0.0-20200420144301-321943fe3a4a
-## explicit
-# github.com/go-chi/chi v4.0.3+incompatible
+# github.com/go-chi/chi v4.1.1+incompatible
 ## explicit
 github.com/go-chi/chi
 github.com/go-chi/chi/middleware
@@ -95,7 +85,7 @@ github.com/go-ole/go-ole
 github.com/go-ole/go-ole/oleutil
 # github.com/go-stack/stack v1.8.0
 github.com/go-stack/stack
-# github.com/golang/protobuf v1.3.5
+# github.com/golang/protobuf v1.4.2
 ## explicit
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/protoc-gen-go/descriptor
@@ -107,10 +97,10 @@ github.com/golang/protobuf/ptypes/timestamp
 github.com/golang/snappy
 # github.com/gorilla/websocket v1.4.1-0.20190629185528-ae1634f6a989
 github.com/gorilla/websocket
-# github.com/hashicorp/golang-lru v0.0.0-20160813221303-0a025b7e63ad
+# github.com/hashicorp/golang-lru v0.5.4
 github.com/hashicorp/golang-lru
 github.com/hashicorp/golang-lru/simplelru
-# github.com/huin/goupnp v0.0.0-20161224104101-679507af18f3
+# github.com/huin/goupnp v1.0.0
 github.com/huin/goupnp
 github.com/huin/goupnp/dcps/internetgateway1
 github.com/huin/goupnp/dcps/internetgateway2
@@ -124,16 +114,12 @@ github.com/inconshreveable/mousetrap
 github.com/jackpal/go-nat-pmp
 # github.com/karalabe/usb v0.0.0-20190919080040-51dc0efba356
 github.com/karalabe/usb
-# github.com/kbinani/screenshot v0.0.0-20191211154542-3a185f1ce18f
-## explicit
 # github.com/keybase/go-codec v0.0.0-20180928230036-164397562123
 ## explicit
 github.com/keybase/go-codec/codec
 # github.com/keybase/go-merkle-tree v0.0.0-20200218013905-59a254fdbe43
 ## explicit
 github.com/keybase/go-merkle-tree
-# github.com/lxn/win v0.0.0-20191128105842-2da648fda5b4
-## explicit
 # github.com/mattn/go-runewidth v0.0.4
 github.com/mattn/go-runewidth
 # github.com/olekukonko/tablewriter v0.0.2-0.20190409134802-7e037d187b0c
@@ -147,11 +133,7 @@ github.com/pkg/errors
 github.com/prometheus/tsdb/fileutil
 # github.com/rjeczalik/notify v0.9.1
 github.com/rjeczalik/notify
-# github.com/rs/cors v0.0.0-20160617231935-a62a804a8a00
-github.com/rs/cors
-# github.com/rs/xhandler v0.0.0-20160618193221-ed27b6fd6521
-github.com/rs/xhandler
-# github.com/spf13/cobra v0.0.6
+# github.com/spf13/cobra v1.0.0
 ## explicit
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.3
@@ -179,16 +161,20 @@ github.com/syndtr/goleveldb/leveldb/util
 # github.com/tyler-smith/go-bip39 v1.0.1-0.20181017060643-dbb3b84ba2ef
 github.com/tyler-smith/go-bip39
 github.com/tyler-smith/go-bip39/wordlists
+# github.com/velas/Velas-Sphere-Contracts v0.0.0-20200528102751-5349840267b7
+## explicit
+github.com/velas/Velas-Sphere-Contracts
 # github.com/wsddn/go-ecdh v0.0.0-20161211032359-48726bab9208
 github.com/wsddn/go-ecdh
 # golang.org/x/crypto v0.0.0-20200311171314-f7b00557c8c4
 golang.org/x/crypto/curve25519
+golang.org/x/crypto/hkdf
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/ripemd160
 golang.org/x/crypto/scrypt
 golang.org/x/crypto/sha3
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20200301022130-244492dfa37a
+# golang.org/x/net v0.0.0-20200425230154-ff2c4b7c35a0
 golang.org/x/net/context
 golang.org/x/net/html
 golang.org/x/net/html/atom
@@ -199,7 +185,7 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527
+# golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
 golang.org/x/sys/windows
@@ -226,7 +212,7 @@ golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 # google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.28.0
+# google.golang.org/grpc v1.29.1
 ## explicit
 google.golang.org/grpc
 google.golang.org/grpc/attributes
@@ -255,6 +241,7 @@ google.golang.org/grpc/internal/grpcsync
 google.golang.org/grpc/internal/grpcutil
 google.golang.org/grpc/internal/resolver/dns
 google.golang.org/grpc/internal/resolver/passthrough
+google.golang.org/grpc/internal/status
 google.golang.org/grpc/internal/syscall
 google.golang.org/grpc/internal/transport
 google.golang.org/grpc/keepalive
@@ -266,5 +253,37 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
+# google.golang.org/protobuf v1.23.0
+google.golang.org/protobuf/encoding/prototext
+google.golang.org/protobuf/encoding/protowire
+google.golang.org/protobuf/internal/descfmt
+google.golang.org/protobuf/internal/descopts
+google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/encoding/defval
+google.golang.org/protobuf/internal/encoding/messageset
+google.golang.org/protobuf/internal/encoding/tag
+google.golang.org/protobuf/internal/encoding/text
+google.golang.org/protobuf/internal/errors
+google.golang.org/protobuf/internal/fieldnum
+google.golang.org/protobuf/internal/fieldsort
+google.golang.org/protobuf/internal/filedesc
+google.golang.org/protobuf/internal/filetype
+google.golang.org/protobuf/internal/flags
+google.golang.org/protobuf/internal/genname
+google.golang.org/protobuf/internal/impl
+google.golang.org/protobuf/internal/mapsort
+google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/set
+google.golang.org/protobuf/internal/strs
+google.golang.org/protobuf/internal/version
+google.golang.org/protobuf/proto
+google.golang.org/protobuf/reflect/protoreflect
+google.golang.org/protobuf/reflect/protoregistry
+google.golang.org/protobuf/runtime/protoiface
+google.golang.org/protobuf/runtime/protoimpl
+google.golang.org/protobuf/types/descriptorpb
+google.golang.org/protobuf/types/known/anypb
+google.golang.org/protobuf/types/known/durationpb
+google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce
 gopkg.in/natefinch/npipe.v2

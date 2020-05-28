@@ -9,6 +9,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/pkg/errors"
+	"github.com/sorenvonsarvort/velas-sphere/internal/handler"
 	"github.com/sorenvonsarvort/velas-sphere/internal/initializer"
 	"github.com/sorenvonsarvort/velas-sphere/internal/service"
 	"github.com/spf13/cobra"
@@ -42,7 +43,12 @@ func NewNodeCommand() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			contractBuilder := initializer.ContractInitializer(client, config.Node.EthdepositcontractAddress)
+			ethDepositContract, err := initializer.ContractInitializer(client, config.Node.EthdepositcontractAddress)
+			if err != nil {
+				return fmt.Errorf("failed to init the contract: %w", err)
+			}
+
+			optsInitializer := initializer.TransactOptions(client)
 
 			db, err := leveldb.OpenFile("db", nil)
 			if err != nil {
@@ -55,7 +61,13 @@ func NewNodeCommand() *cobra.Command {
 			mux := service.Mux(
 				&wg,
 				map[string]service.Service{
-					"storage":   service.Storage(db, contractBuilder),
+					"storage": service.Storage(
+						handler.Config{
+							DB:                         db,
+							Contract:                   ethDepositContract,
+							TransactOptionsInitializer: optsInitializer,
+						},
+					),
 					"streaming": service.Streaming,
 				},
 			)

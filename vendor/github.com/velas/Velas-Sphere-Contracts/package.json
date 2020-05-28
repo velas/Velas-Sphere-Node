@@ -1,0 +1,21 @@
+{
+  "name": "velas-test",
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {
+    "lint": "solium -d contracts --fix",
+    "coverage": "solidity-coverage",
+    "compile": "truffle compile && ./abigen.sh"
+  },
+  "dependencies": {
+    "solc": "^0.4.24",
+    "solidity": "0.0.1",
+    "solium": "^1.1.5",
+    "zeppelin-solidity": "^1.12.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eth-gas-reporter": "^0.1.1",
+    "solidity-coverage": "^0.4.9"
+  }
+}
