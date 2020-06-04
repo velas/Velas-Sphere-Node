@@ -89,9 +89,7 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 
 		registerTx, err := ethDepositContract.RegisterNode(registerOpts, fromAddress, fromAddress)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to register the node:", err)
-			return
+			log.Println("failed to register the node, ignoring:", err)
 		}
 		_ = registerTx
 
