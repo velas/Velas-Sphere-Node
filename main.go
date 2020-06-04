@@ -51,6 +51,8 @@ func entropyFromFileDemo(path string) {
 }
 
 func main() {
+	// contractDeploymentDemo()
+	// return
 	rootCmd := &cobra.Command{
 		Use: "velas-sphere",
 	}

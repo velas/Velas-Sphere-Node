@@ -4,13 +4,14 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	"github.com/sorenvonsarvort/velas-sphere/internal/contract"
+	"github.com/velas/Velas-Sphere-Contracts/ethdepositcontract"
+	// "github.com/sorenvonsarvort/velas-sphere/internal/contract"
 	"github.com/sorenvonsarvort/velas-sphere/internal/resources"
 )
 
 type ProviderServer struct {
 	PluginClient       resources.PluginClient
-	Ethdepositcontract *contract.Ethdepositcontract
+	Ethdepositcontract *ethdepositcontract.Ethdepositcontract
 }
 
 func (p ProviderServer) RequestTaskExecution(ctx context.Context, req *resources.TaskExecutionRequest) (*resources.TaskExecutionResponse, error) {

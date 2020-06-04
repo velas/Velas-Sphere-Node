@@ -19,6 +19,8 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 	return func(w http.ResponseWriter, r *http.Request) {
 		initOptions := config.TransactOptionsInitializer
 		if initOptions == nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("no options initializer")
 			return
 		}
 
@@ -121,9 +123,14 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 		responseBytes, err := json.Marshal(
 			map[string]interface{}{
 				"id":      id,
-				"invoice": tx.Hash,
+				"invoice": tx.Hash(),
 			},
 		)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("failed to marshal:", err)
+			return
+		}
 
 		w.Write(responseBytes)
 	}

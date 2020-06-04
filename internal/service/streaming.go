@@ -26,8 +26,10 @@ type Index struct {
 }
 
 type SuperIndex struct {
-	Parts [][]Index `json:"parts"`
-	Title string    `json:"title"`
+	Parts   [][]Index `json:"parts"`
+	Title   string    `json:"title"`
+	Len     string    `json:"len"`
+	Preview Index     `json:"preview"`
 }
 
 // TODO: improve
@@ -156,6 +158,10 @@ func upload() func(w http.ResponseWriter, r *http.Request) {
 
 		keyHex := r.FormValue("key")
 
+		len := r.FormValue("len")
+
+		videoTitle := r.FormValue("title")
+
 		file, _, err := r.FormFile("video")
 		if err != nil {
 			fmt.Println("failed to from file", err)
@@ -206,9 +212,31 @@ func upload() func(w http.ResponseWriter, r *http.Request) {
 			i++
 		}
 
+		previewFile, _, err := r.FormFile("preview")
+		if err != nil {
+			fmt.Println("failed to get form file", err)
+			return
+		}
+
+		defer previewFile.Close()
+
+		previewFileBytes, err := ioutil.ReadAll(previewFile)
+		if err != nil {
+			fmt.Println("failed to read the preview", err)
+			return
+		}
+
+		previewIndex, err := store(previewFileBytes, keyHex)
+		if err != nil {
+			fmt.Println("failed to store the preview", err)
+			return
+		}
+
 		superIndex := SuperIndex{
-			Parts: parts,
-			Title: "My Awesome Video",
+			Parts:   parts,
+			Title:   videoTitle,
+			Len:     len,
+			Preview: previewIndex,
 		}
 
 		superIndexBytes, err := json.Marshal(superIndex)
