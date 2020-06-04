@@ -1,9 +1,0 @@
-{
-    "node": {
-        "plugin_target": "127.0.0.1:8082",
-        "ethereum_node_target": "http://127.0.0.1:8545",
-        "keystore_file_path": "UTC--2020-03-19T15-54-02.157Z--dd3332013e1d12885ab6a3d970acd83314e4b39b",
-        "keystore_password": "d293c2hpdDExMQ==",
-        "ethdepositcontract_address": "0x0000000000000000000000000000000000000000"
-    }
-}
