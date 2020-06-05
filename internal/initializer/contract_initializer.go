@@ -29,11 +29,17 @@ func TransactOptions(ethClient *ethclient.Client) func(key *ecdsa.PrivateKey) (*
 			return nil, fmt.Errorf("failed to get suggested gas price: %w", err)
 		}
 
+		fmt.Println("got suggested gas price:", gasPrice)
+
+		gasPrice.Set(big.NewInt(1000000000 + int64(rand.Int()%1000))) // using randomization for avoiding same-hash transactions.
+
+		fmt.Println("used gas price:", gasPrice)
+
 		auth := bind.NewKeyedTransactor(key)
 		auth.Nonce = big.NewInt(int64(nonce))
 		auth.Value = big.NewInt(0)     // in wei
 		auth.GasLimit = uint64(300000) // in units
-		auth.GasPrice = gasPrice.Add(gasPrice, big.NewInt(int64(rand.Int()%100)))
+		auth.GasPrice = gasPrice
 
 		return auth, nil
 	}
