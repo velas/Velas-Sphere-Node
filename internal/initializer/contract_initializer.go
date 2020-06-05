@@ -24,6 +24,11 @@ func TransactOptions(ethClient *ethclient.Client) func(key *ecdsa.PrivateKey) (*
 			return nil, fmt.Errorf("failed to get pending nonce: %w", err)
 		}
 
+		txC, err := ethClient.PendingTransactionCount(context.Background())
+		if err != nil {
+			return nil, fmt.Errorf("failed to get pending tx count: %w", err)
+		}
+
 		gasPrice, err := ethClient.SuggestGasPrice(context.Background())
 		if err != nil {
 			return nil, fmt.Errorf("failed to get suggested gas price: %w", err)
@@ -36,7 +41,7 @@ func TransactOptions(ethClient *ethclient.Client) func(key *ecdsa.PrivateKey) (*
 		fmt.Println("used gas price:", gasPrice)
 
 		auth := bind.NewKeyedTransactor(key)
-		auth.Nonce = big.NewInt(int64(nonce))
+		auth.Nonce = big.NewInt(int64(nonce) + int64(txC))
 		auth.Value = big.NewInt(0)     // in wei
 		auth.GasLimit = uint64(300000) // in units
 		auth.GasPrice = gasPrice
