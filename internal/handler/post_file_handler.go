@@ -111,6 +111,8 @@ func NewPostFileHandler(config Config) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
+		invoiceOpts.Nonce = invoiceOpts.Nonce.Add(invoiceOpts.Nonce, big.NewInt(1))
+
 		tx, err := ethDepositContract.CreateInvoice(invoiceOpts, fromAddress, big.NewInt(100000))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
