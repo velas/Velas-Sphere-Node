@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"math/big"
+	"math/rand"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -32,7 +33,7 @@ func TransactOptions(ethClient *ethclient.Client) func(key *ecdsa.PrivateKey) (*
 		auth.Nonce = big.NewInt(int64(nonce))
 		auth.Value = big.NewInt(0)     // in wei
 		auth.GasLimit = uint64(300000) // in units
-		auth.GasPrice = gasPrice
+		auth.GasPrice = gasPrice.Add(gasPrice, big.NewInt(int64(rand.Int()%100)))
 
 		return auth, nil
 	}
